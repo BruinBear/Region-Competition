@@ -9,6 +9,37 @@ import matplotlib.patches as patches
 from matplotlib.pyplot import imshow
 # %matplotlib inline
 
+from skimage import data
+from skimage.util import img_as_float
+from skimage.filters import gabor_kernel
+
+def get_filters():
+    # get some 3x3 gabor filters
+    count = 0
+    kernels = []
+    fig, axes = plt.subplots(nrows=4, ncols=4, figsize=(5, 6))
+    plt.gray()
+    for theta in range(4):
+        theta = theta / 4. * np.pi
+        for sigma in (1, 3):
+            for frequency in (0.05, 0.25):
+                count += 1
+                kernel = np.real(gabor_kernel(frequency, theta=theta,
+                                              sigma_x=sigma, sigma_y=sigma))
+                kernels.append(kernel)
+
+    fig.suptitle('Kernels', fontsize=12)
+    axes[0][0].axis('off')
+    i = 0
+    for ax_row in axes[0:4]:
+        for ax in ax_row[0:4]:
+            ax.imshow(np.real(kernels[i]), interpolation='nearest')
+            ax.axis('off')
+            i += 1
+    plt.show()
+    return kernel
+
+
 def load_image( infilename ) :
     img = Image.open( infilename ).convert('L')
     data = np.asarray( img, dtype="int32" )
